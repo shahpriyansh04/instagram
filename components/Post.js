@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BookmarkIcon,
   ChatIcon,
@@ -22,13 +22,13 @@ import {
 } from "@firebase/firestore";
 import { db } from "../firebase";
 import Moment from "react-moment";
-function Post({ id, username, caption, userImg, img }) {
+import Dropdown from "./Dropdown";
+function Post({ id, username, caption, userImg, img, uid }) {
   const { data: session } = useSession();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
-
   useEffect(
     () =>
       onSnapshot(
@@ -43,8 +43,6 @@ function Post({ id, username, caption, userImg, img }) {
     [db, id]
   );
 
-
-
   useEffect(
     () =>
       onSnapshot(collection(db, "posts", id, "likes"), (snapshot) => {
@@ -54,15 +52,16 @@ function Post({ id, username, caption, userImg, img }) {
     [db, id]
   );
 
-  useEffect(() => 
-    setHasLiked(
-      likes.findIndex((like) => (like.id === session?.user?.uid)) !== -1
-    )
-  , [likes]);
-
+  useEffect(
+    () =>
+      setHasLiked(
+        likes.findIndex((like) => like.id === session?.user?.uid) !== -1
+      ),
+    [likes]
+  );
 
   const likePost = async () => {
-    if (hasLiked) {      
+    if (hasLiked) {
       await deleteDoc(doc(db, "posts", id, "likes", session?.user?.uid));
     } else {
       await setDoc(doc(db, "posts", id, "likes", session?.user?.uid), {
@@ -93,15 +92,21 @@ function Post({ id, username, caption, userImg, img }) {
           alt=""
         />
         <p className="flex-1 font-bold">{username}</p>
-        <DotsHorizontalIcon className="h-5" />
+        {session.user.uid === uid && <Dropdown></Dropdown>}
       </div>
       <img src={img} className="w-full object-cover" />
 
       {session && (
         <div className="flex justify-between px-4 pt-4">
           <div className="flex space-x-4">
-            { hasLiked ? (<HeartIconFilled onClick={likePost} className="btn text-red-500"/>) : ( <HeartIcon onClick={likePost}  className="btn" />)
-             }
+            {hasLiked ? (
+              <HeartIconFilled
+                onClick={likePost}
+                className="btn text-red-500"
+              />
+            ) : (
+              <HeartIcon onClick={likePost} className="btn" />
+            )}
             <ChatIcon className="btn" />
             <PaperAirplaneIcon className="btn" />
           </div>
@@ -109,10 +114,10 @@ function Post({ id, username, caption, userImg, img }) {
         </div>
       )}
 
-
-
       <p className="p-5 truncate ">
-        {likes.length > 0 && (<p className="font-bold mb-1">{likes.length} likes</p>)}
+        {likes.length > 0 && (
+          <p className="font-bold mb-1">{likes.length} likes</p>
+        )}
         <span className="font-bold mr-1">{username} </span>
         {caption}
       </p>
@@ -157,6 +162,7 @@ function Post({ id, username, caption, userImg, img }) {
           </button>
         </form>
       )}
+      <div className="relative"></div>
     </div>
   );
 }
