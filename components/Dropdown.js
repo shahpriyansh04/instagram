@@ -1,11 +1,21 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { PencilIcon , TrashIcon} from "@heroicons/react/solid";
 import { DotsHorizontalIcon } from "@heroicons/react/outline";
-function Dropdown() {
+import {storage , db} from '../firebase';
+import { deleteObject, ref } from "@firebase/storage";
+import { deleteDoc, doc } from "@firebase/firestore";
+function Dropdown({id}) {
+  const deletePost = async() => {
+    const deleteRef = ref(storage, `posts/${id}/image`)
+    await deleteObject(deleteRef).then(async () => {
+      await deleteDoc(doc(db, "posts" , id )).then(() => console.log("Deleted Successfully"))
+    })
+
+  }
   return (
     <div className="w-56 text-right">
-      <Menu as="div" className="relative inline-block text-left">
+      <Menu as="div" className="relative inline-block text-center">
         <div>
           <Menu.Button className="inline-flex justify-center w-full mr-2  text-sm font-medium  rounded-md ">
             <DotsHorizontalIcon
@@ -23,118 +33,36 @@ function Dropdown() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 w-56 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 w-36 text-center origin-top-right bg-white divide-y
+           divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    className={`${
-                      active ? "bg-violet-500 text-white" : "text-gray-900"
-                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                  className={`group flex rounded-md items-center  w-full px-2 py-2 text-sm`}
                   >
-                    {active ? (
-                      <EditActiveIcon
+                      <PencilIcon
                         className="w-5 h-5 mr-2"
                         aria-hidden="true"
                       />
-                    ) : (
-                      <EditInactiveIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Edit
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-violet-500 text-white" : "text-gray-900"
-                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                  >
-                    {active ? (
-                      <DuplicateActiveIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <DuplicateInactiveIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Duplicate
+                                        Edit
                   </button>
                 )}
               </Menu.Item>
             </div>
             <div className="px-1 py-1">
-              <Menu.Item>
+              <Menu.Item onClick={deletePost}>
                 {({ active }) => (
                   <button
-                    className={`${
-                      active ? "bg-violet-500 text-white" : "text-gray-900"
-                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                    className={`group flex rounded-md items-center w-full px-2 py-2 text-sm } 
+                    `}
                   >
-                    {active ? (
-                      <ArchiveActiveIcon
-                        className="w-5 h-5 mr-2"
+                      <TrashIcon  
+                        className={`w-5 text-red-700 h-5  mr-2 `}
                         aria-hidden="true"
                       />
-                    ) : (
-                      <ArchiveInactiveIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Archive
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-violet-500 text-white" : "text-gray-900"
-                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                  >
-                    {active ? (
-                      <MoveActiveIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <MoveInactiveIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                    )}
-                    Move
-                  </button>
-                )}
-              </Menu.Item>
-            </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-violet-500 text-white" : "text-gray-900"
-                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                  >
-                    {active ? (
-                      <DeleteActiveIcon
-                        className="w-5 h-5 mr-2 text-violet-400"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <DeleteInactiveIcon
-                        className="w-5 h-5 mr-2 text-violet-400"
-                        aria-hidden="true"
-                      />
-                    )}
+                   
+                   
                     Delete
                   </button>
                 )}

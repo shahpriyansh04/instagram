@@ -92,7 +92,7 @@ function Post({ id, username, caption, userImg, img, uid }) {
           alt=""
         />
         <p className="flex-1 font-bold">{username}</p>
-        {session.user.uid === uid && <Dropdown></Dropdown>}
+        {session?.user?.uid === uid && <Dropdown id={id}></Dropdown>}
       </div>
       <img src={img} className="w-full object-cover" />
 
