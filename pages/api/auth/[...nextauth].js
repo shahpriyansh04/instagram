@@ -13,13 +13,29 @@ export default NextAuth({
     signIn: "/auth/signin",
   },
   callbacks: {
-    async session({ session, token, user }) {
-      session.user.username = session.user.name
-        .split(" ")
-        .join("")
-        .toLowerCase();
-
+    async session({ session, token }) {
+      let username;
       session.user.uid = token.sub;
+      console.log(session);
+      await fetch("http://localhost:3000/api/user/getUser", {
+        params: { uid: session.user.uid },
+      }).then((res) =>
+        res.json().then((data) => {
+          console.log(data);
+        })
+      );
+      if (username) {
+        session.user.username = username;
+      } else {
+        await fetch(
+          `http://localhost:3000/api/user/setUse?id=${token.sub}`
+        ).then((res) =>
+          res.json().then((data) => {
+            session.user.username = data.username;
+          })
+        );
+      }
+
       return session;
     },
   },
