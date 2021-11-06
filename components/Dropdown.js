@@ -1,18 +1,25 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { PencilIcon , TrashIcon} from "@heroicons/react/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import { DotsHorizontalIcon } from "@heroicons/react/outline";
-import {storage , db} from '../firebase';
+import { storage, db } from "../firebase";
 import { deleteObject, ref } from "@firebase/storage";
 import { deleteDoc, doc } from "@firebase/firestore";
-function Dropdown({id}) {
-  const deletePost = async() => {
-    const deleteRef = ref(storage, `posts/${id}/image`)
-    await deleteObject(deleteRef).then(async () => {
-      await deleteDoc(doc(db, "posts" , id )).then(() => console.log("Deleted Successfully"))
-    })
-
-  }
+import { modalState } from "../atoms/modalAtom";
+import { useRecoilState } from "recoil";
+import { alertState, alertData } from "../atoms/alertAtom";
+function Dropdown({ id }) {
+  const [isOpened, setIsOpened] = useRecoilState(alertState);
+  const [postData, setPostData] = useRecoilState(alertData);
+  const deletePost = async () => {
+    setIsOpened(true);
+    setPostData({
+      postId: id,
+      type: "delete",
+      title: "Are you sure ?",
+      description: "This post will be deleted permanently",
+    });
+  };
   return (
     <div className="w-56 text-right">
       <Menu as="div" className="relative inline-block text-center">
@@ -33,19 +40,18 @@ function Dropdown({id}) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 w-36 text-center origin-top-right bg-white divide-y
-           divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items
+            className="absolute right-0 w-36 text-center origin-top-right bg-white divide-y
+           divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          >
             <div className="px-1 py-1 ">
               <Menu.Item>
                 {({ active }) => (
                   <button
-                  className={`group flex rounded-md items-center  w-full px-2 py-2 text-sm`}
+                    className={`group flex rounded-md items-center  w-full px-2 py-2 text-sm`}
                   >
-                      <PencilIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                                        Edit
+                    <PencilIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                    Edit
                   </button>
                 )}
               </Menu.Item>
@@ -57,12 +63,10 @@ function Dropdown({id}) {
                     className={`group flex rounded-md items-center w-full px-2 py-2 text-sm } 
                     `}
                   >
-                      <TrashIcon  
-                        className={`w-5 text-red-700 h-5  mr-2 `}
-                        aria-hidden="true"
-                      />
-                   
-                   
+                    <TrashIcon
+                      className={`w-5 text-red-700 h-5  mr-2 `}
+                      aria-hidden="true"
+                    />
                     Delete
                   </button>
                 )}

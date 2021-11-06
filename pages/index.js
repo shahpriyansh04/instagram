@@ -1,4 +1,5 @@
 import Head from "next/head";
+import AlertDialog from "../components/AlertDialog";
 import Feed from "../components/Feed";
 import Header from "../components/Header";
 import Modal from "../components/Modal";
@@ -11,8 +12,8 @@ export default function Home() {
       </Head>
       <Header />
       <Feed />
-
       <Modal />
+      <AlertDialog />
     </div>
   );
 }
