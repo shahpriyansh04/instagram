@@ -1,13 +1,12 @@
-import { SignIn } from "@clerk/clerk-react";
+import { SignUp } from "@clerk/clerk-react";
 import React from "react";
 
-function signin() {
+function signup() {
   return (
     <div className="flex h-screen justify-center items-center">
-      {" "}
-      <SignIn />
+      <SignUp />
     </div>
   );
 }
 
-export default signin;
+export default signup;

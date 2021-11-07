@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@clerk/nextjs": "^2.0.4",
     "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.5",
     "@tailwindcss/forms": "^0.3.4",
@@ -14,7 +15,6 @@
     "firebase-admin": "^10.0.0",
     "moment": "^2.29.1",
     "next": "latest",
-    "next-auth": "^4.0.0-beta.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-moment": "^1.1.1",

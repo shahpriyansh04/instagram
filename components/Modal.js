@@ -11,11 +11,13 @@ import {
   serverTimestamp,
   updateDoc,
 } from "@firebase/firestore";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/router";
 import { ref, getDownloadURL, uploadString } from "@firebase/storage";
 function Modal() {
   const [open, setOpen] = useRecoilState(modalState);
-  const { data: session } = useSession();
+  const user = useUser();
+  const router = useRouter();
   const filePickerRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -36,10 +38,10 @@ function Modal() {
 
     setLoading(true);
     const docRef = await addDoc(collection(db, "posts"), {
-      username: session.user.username,
-      uid: session.user.uid,
+      username: user.username,
+      uid: user.id,
       caption: captionRef.current.value,
-      profileImg: session.user.image,
+      profileImg: user.profileImageUrl,
       timestamp: serverTimestamp(),
     });
     console.log("New Doc Created with ID ", docRef.id);
@@ -54,6 +56,9 @@ function Modal() {
         });
       }
     );
+    if (router.pathname !== "/") {
+      router.push("/");
+    }
     setOpen(false);
     setLoading(false);
     setSelectedFile(null);

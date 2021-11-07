@@ -1,13 +1,35 @@
 import "../styles/globals.css";
-import { SessionProvider } from "next-auth/react";
+import {
+  ClerkProvider,
+  SignedIn,
+  ClerkLoaded,
+  ClerkLoading,
+  SignedOut,
+  RedirectToSignIn,
+  SignIn,
+} from "@clerk/nextjs";
 import { RecoilRoot } from "recoil";
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+import Header from "../components/Header";
+import Loading from "../components/Loading";
+import Modal from "../components/Modal";
+function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider session={session}>
+    <ClerkProvider>
       <RecoilRoot>
-        <Component {...pageProps} />
+        <ClerkLoading>
+          <Loading />
+        </ClerkLoading>
+        <ClerkLoaded>
+          <SignedIn>
+            <Modal />
+            <Component {...pageProps} />
+          </SignedIn>
+          <SignedOut>
+            <RedirectToSignIn />
+          </SignedOut>
+        </ClerkLoaded>
       </RecoilRoot>
-    </SessionProvider>
+    </ClerkProvider>
   );
 }
 

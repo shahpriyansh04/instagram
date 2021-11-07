@@ -12,7 +12,7 @@ import {
   serverTimestamp,
   updateDoc,
 } from "@firebase/firestore";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/clerk-react";
 import {
   ref,
   getDownloadURL,
@@ -23,8 +23,9 @@ function AlertDialog() {
   const [open, setOpen] = useRecoilState(alertState);
   const [data, setData] = useRecoilState(alertData);
   console.log(data);
-  const { data: session } = useSession();
 
+  const user = useUser();
+  console.log(user);
   const [loading, setLoading] = useState(false);
 
   const deletePost = async () => {

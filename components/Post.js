@@ -8,7 +8,7 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/clerk-react";
 import {
   addDoc,
   collection,
@@ -24,7 +24,7 @@ import { db } from "../firebase";
 import Moment from "react-moment";
 import Dropdown from "./Dropdown";
 function Post({ id, username, caption, userImg, img, uid }) {
-  const { data: session } = useSession();
+  const user = useUser();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
@@ -54,22 +54,16 @@ function Post({ id, username, caption, userImg, img, uid }) {
   );
 
   useEffect(
-    () =>
-      setHasLiked(
-        likes.findIndex((like) => like.id === session?.user?.uid) !== -1
-      ),
+    () => setHasLiked(likes.findIndex((like) => like.id === user.id) !== -1),
     [likes]
   );
 
   const likePost = async () => {
-    await setDoc(doc(db, "users", session?.user?.uid), {
-      username: "session.user.username",
-    });
     if (hasLiked) {
-      await deleteDoc(doc(db, "posts", id, "likes", session?.user?.uid));
+      await deleteDoc(doc(db, "posts", id, "likes", user.id));
     } else {
-      await setDoc(doc(db, "posts", id, "likes", session?.user?.uid), {
-        username: session.user.username,
+      await setDoc(doc(db, "posts", id, "likes", user.id), {
+        username: user.username,
       });
     }
   };
@@ -82,8 +76,8 @@ function Post({ id, username, caption, userImg, img, uid }) {
 
     await addDoc(collection(db, "posts", id, "comments"), {
       comment: commentToSend,
-      username: session.user.username,
-      userImg: session.user.image,
+      username: user.username,
+      userImg: user.profileImageUrl,
       timeStamp: serverTimestamp(),
     });
   };
@@ -96,27 +90,22 @@ function Post({ id, username, caption, userImg, img, uid }) {
           alt=""
         />
         <p className="flex-1 font-bold">{username}</p>
-        {session?.user?.uid === uid && <Dropdown id={id}></Dropdown>}
+        {user.id === uid && <Dropdown id={id}></Dropdown>}
       </div>
       <img src={img} className="w-full object-cover" />
 
-      {session && (
-        <div className="flex justify-between px-4 pt-4">
-          <div className="flex space-x-4">
-            {hasLiked ? (
-              <HeartIconFilled
-                onClick={likePost}
-                className="btn text-red-500"
-              />
-            ) : (
-              <HeartIcon onClick={likePost} className="btn" />
-            )}
-            <ChatIcon className="btn" />
-            <PaperAirplaneIcon className="btn" />
-          </div>
-          <BookmarkIcon className="btn" />
+      <div className="flex justify-between px-4 pt-4">
+        <div className="flex space-x-4">
+          {hasLiked ? (
+            <HeartIconFilled onClick={likePost} className="btn text-red-500" />
+          ) : (
+            <HeartIcon onClick={likePost} className="btn" />
+          )}
+          <ChatIcon className="btn" />
+          <PaperAirplaneIcon className="btn" />
         </div>
-      )}
+        <BookmarkIcon className="btn" />
+      </div>
 
       <p className="p-5 truncate ">
         {likes.length > 0 && (
@@ -146,26 +135,24 @@ function Post({ id, username, caption, userImg, img, uid }) {
         </div>
       )}
 
-      {session && (
-        <form className="flex items-center p-4 " onSubmit={sendComment}>
-          <EmojiHappyIcon className="h-7" />
-          <input
-            type="text"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="border-none flex-1 focus:ring-0  outline-none
+      <form className="flex items-center p-4 " onSubmit={sendComment}>
+        <EmojiHappyIcon className="h-7" />
+        <input
+          type="text"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className="border-none flex-1 focus:ring-0  outline-none
           "
-            placeholder="Add a comment..."
-          />
-          <button
-            className="font-semibold text-blue-400 disabled:cursor-not-allowed"
-            type="submit"
-            disabled={!comment.trim()}
-          >
-            Post
-          </button>
-        </form>
-      )}
+          placeholder="Add a comment..."
+        />
+        <button
+          className="font-semibold text-blue-400 disabled:cursor-not-allowed"
+          type="submit"
+          disabled={!comment.trim()}
+        >
+          Post
+        </button>
+      </form>
       <div className="relative"></div>
     </div>
   );

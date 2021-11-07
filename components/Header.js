@@ -9,14 +9,14 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { modalState } from "../atoms/modalAtom";
 import { useRecoilState } from "recoil";
-
+import { UserButton } from "@clerk/nextjs";
 function Header() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const user = useUser();
   const [open, setOpen] = useRecoilState(modalState);
   return (
     <div className="sticky top-0 z-50 shadow-sm border-b bg-white">
@@ -68,32 +68,23 @@ function Header() {
             }}
           />
           <MenuIcon className="h-6 md:hidden cursor-pointer mt-1" />
-
-          {session ? (
-            <>
-              <div className="relative navBtn">
-                <PaperAirplaneIcon className="navBtn rotate-45" />
-                <div className="absolute -top-2 -right-2 bg-red-500 rounded-full flex items-center  justify-center animate-pulse text-white text-xs w-5 h-5">
-                  3
-                </div>
+          <>
+            <div className="relative navBtn">
+              <PaperAirplaneIcon className="navBtn rotate-45" />
+              <div className="absolute -top-2 -right-2 bg-red-500 rounded-full flex items-center  justify-center animate-pulse text-white text-xs w-5 h-5">
+                3
               </div>
-              <PlusCircleIcon
-                className="navBtn"
-                onClick={() => {
-                  setOpen(true);
-                }}
-              />
-              <UserGroupIcon className="navBtn" />
-              <HeartIcon className="navBtn" />
-              <img
-                onClick={signOut}
-                src={session.user.image}
-                className="h-10 rounded-full cursor-pointer w-10"
-              ></img>
-            </>
-          ) : (
-            <button onClick={signIn}>Sign In</button>
-          )}
+            </div>
+            <PlusCircleIcon
+              className="navBtn"
+              onClick={() => {
+                setOpen(true);
+              }}
+            />
+            <UserGroupIcon className="navBtn" />
+            <HeartIcon className="navBtn" />
+            <UserButton />
+          </>
         </div>
       </div>
     </div>
