@@ -32,7 +32,7 @@ function Modal() {
       setSelectedFile(readerEvent.target.result);
     };
   };
-
+  console.log(open);
   const uploadPost = async () => {
     if (loading) return;
 
@@ -56,9 +56,9 @@ function Modal() {
         });
       }
     );
-    if (router.pathname !== "/") {
-      router.push("/");
-    }
+    // if (router.pathname !== "/") {
+    //   router.push("/");
+    // }
     setOpen(false);
     setLoading(false);
     setSelectedFile(null);
@@ -69,7 +69,9 @@ function Modal() {
       <Dialog
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+        }}
       >
         <div className="flex items-end justify-center min-h-[800px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
