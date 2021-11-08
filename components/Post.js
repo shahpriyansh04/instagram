@@ -19,6 +19,9 @@ import {
   setDoc,
   doc,
   deleteDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
 } from "@firebase/firestore";
 import { db } from "../firebase";
 import Moment from "react-moment";
@@ -60,10 +63,16 @@ function Post({ id, username, caption, userImg, img, uid }) {
 
   const likePost = async () => {
     if (hasLiked) {
-      await deleteDoc(doc(db, "posts", id, "likes", user.id));
+      const likeRef = await deleteDoc(doc(db, "posts", id, "likes", user.id));
+      await updateDoc(doc(db, "users", user.id), {
+        likes: arrayRemove(id),
+      });
     } else {
-      await setDoc(doc(db, "posts", id, "likes", user.id), {
+      const likeRef = await setDoc(doc(db, "posts", id, "likes", user.id), {
         username: user.username,
+      });
+      await updateDoc(doc(db, "users", user.id), {
+        likes: arrayUnion(id),
       });
     }
   };
@@ -74,11 +83,14 @@ function Post({ id, username, caption, userImg, img, uid }) {
     const commentToSend = comment;
     setComment("");
 
-    await addDoc(collection(db, "posts", id, "comments"), {
+    const commentRef = await addDoc(collection(db, "posts", id, "comments"), {
       comment: commentToSend,
       username: user.username,
       userImg: user.profileImageUrl,
       timeStamp: serverTimestamp(),
+    });
+    await updateDoc(doc(db, "users", user.id), {
+      comments: arrayUnion(commentRef.id),
     });
   };
   return (

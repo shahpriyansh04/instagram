@@ -35,8 +35,8 @@ function AlertDialog() {
     await deleteObject(deleteRef).then(async () => {
       await deleteDoc(doc(db, "posts", data.postId)).then(async () => {
         await updateDoc(doc(db, "users", user.id), {
-          posts: arrayRemove(data.postId), 
-        })
+          posts: arrayRemove(data.postId),
+        });
         setOpen(false);
         setLoading(false);
         setData({ postId: null, title: "", description: "", type: "" });
@@ -54,12 +54,13 @@ function AlertDialog() {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed z-10 inset-0 overflow-y-auto"
-        onClose={() => {}
+        className="fixed z-10  inset-0 overflow-y-auto"
+        onClose={
+          () => {}
           //cancelDeletePost()
         }
       >
-        <div className="flex items-end justify-center min-h-[600px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-end justify-center min-h-[500px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"

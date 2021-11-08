@@ -67,7 +67,7 @@ function Header() {
               router.push("/");
             }}
           />
-          <MenuIcon className="h-6 md:hidden cursor-pointer mt-1" />
+          {/* <MenuIcon className="h-6 md:hidden cursor-pointer mt-1" /> */}
           <>
             <div className="relative navBtn">
               <PaperAirplaneIcon className="navBtn rotate-45" />
@@ -76,7 +76,7 @@ function Header() {
               </div>
             </div>
             <PlusCircleIcon
-              className="navBtn"
+              className="h-6 inline-flex cursor-pointer md:hover:scale-125 transition-all duration-150 ease-out"
               onClick={() => {
                 setOpen(true);
               }}

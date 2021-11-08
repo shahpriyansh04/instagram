@@ -14,7 +14,7 @@ import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 function MyApp({ Component, pageProps }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider frontendApi="clerk.6nk9u.5oduc.lcl.dev">
       <RecoilRoot>
         <ClerkLoading>
           <Loading />

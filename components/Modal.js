@@ -19,6 +19,7 @@ function Modal() {
   const [open, setOpen] = useRecoilState(modalState);
   const user = useUser();
   const router = useRouter();
+  const initialFocusRef = useRef();
   const filePickerRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -56,8 +57,8 @@ function Modal() {
           image: downloadURL,
         });
         await updateDoc(doc(db, "users", user.id), {
-          posts: arrayUnion(docRef.id), 
-        })
+          posts: arrayUnion(docRef.id),
+        });
       }
     );
     // if (router.pathname !== "/") {
@@ -73,11 +74,12 @@ function Modal() {
       <Dialog
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
+        initialFocus={initialFocusRef}
         onClose={() => {
           // setOpen(false);
         }}
       >
-        <div className="flex items-end justify-center min-h-[800px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-end justify-center min-h-[550px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -145,7 +147,6 @@ function Modal() {
                   <div>
                     <input
                       type="file"
-
                       disabled={loading}
                       hidden
                       ref={filePickerRef}
@@ -155,7 +156,7 @@ function Modal() {
                   <div className="mt-2">
                     <input
                       type="text"
-                      disabled={loading}
+                      // disabled={loading}
                       ref={captionRef}
                       placeholder="Please enter a caption ..."
                       className="border-none focus:ring-0 w-full text-center"
@@ -165,28 +166,30 @@ function Modal() {
 
                 <div className="flex  space-x-4 mt-5 sm:mt-6">
                   <button
-                    onClick={() => {setOpen(false)}}
+                    onClick={() => {
+                      setOpen(false);
+                    }}
+                    ref={initialFocusRef}
                     type="button"
                     disabled={loading}
-                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-2 md:px-4 py-2 
                     bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none 
                     focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300
                      disabled:cursor-not-allowed disabled:hover:bg-gray-300"
                   >
-                      Cancel
+                    Cancel
                   </button>
                   <button
                     onClick={uploadPost}
                     type="button"
-                    disabled={!selectedFile}
-                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 
+                    disabled={!selectedFile || loading}
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-2 md:px-4 py-2 
                     bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none 
                     focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300
                      disabled:cursor-not-allowed disabled:hover:bg-gray-300"
                   >
                     {loading ? "Uploading..." : "Upload Post"}
                   </button>
- 
                 </div>
               </div>
             </div>
