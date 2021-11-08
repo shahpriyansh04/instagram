@@ -6,6 +6,7 @@ import { CameraIcon } from "@heroicons/react/outline";
 import { db, storage } from "../firebase";
 import {
   addDoc,
+  arrayUnion,
   collection,
   doc,
   serverTimestamp,
@@ -46,7 +47,7 @@ function Modal() {
     });
     console.log("New Doc Created with ID ", docRef.id);
 
-    const imageRef = ref(storage, `posts/${docRef.id}/image`);
+    const imageRef = ref(storage, `posts/${user.id}/${docRef.id}/image`);
 
     await uploadString(imageRef, selectedFile, "data_url").then(
       async (snapshot) => {
@@ -54,6 +55,9 @@ function Modal() {
         await updateDoc(doc(db, "posts", docRef.id), {
           image: downloadURL,
         });
+        await updateDoc(doc(db, "users", user.id), {
+          posts: arrayUnion(docRef.id), 
+        })
       }
     );
     // if (router.pathname !== "/") {
@@ -70,7 +74,7 @@ function Modal() {
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
         onClose={() => {
-          setOpen(false);
+          // setOpen(false);
         }}
       >
         <div className="flex items-end justify-center min-h-[800px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -141,6 +145,8 @@ function Modal() {
                   <div>
                     <input
                       type="file"
+
+                      disabled={loading}
                       hidden
                       ref={filePickerRef}
                       onChange={addImageToPost}
@@ -149,6 +155,7 @@ function Modal() {
                   <div className="mt-2">
                     <input
                       type="text"
+                      disabled={loading}
                       ref={captionRef}
                       placeholder="Please enter a caption ..."
                       className="border-none focus:ring-0 w-full text-center"
@@ -156,7 +163,18 @@ function Modal() {
                   </div>
                 </div>
 
-                <div className="mt-5 sm:mt-6">
+                <div className="flex  space-x-4 mt-5 sm:mt-6">
+                  <button
+                    onClick={() => {setOpen(false)}}
+                    type="button"
+                    disabled={loading}
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 
+                    bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none 
+                    focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300
+                     disabled:cursor-not-allowed disabled:hover:bg-gray-300"
+                  >
+                      Cancel
+                  </button>
                   <button
                     onClick={uploadPost}
                     type="button"
@@ -168,6 +186,7 @@ function Modal() {
                   >
                     {loading ? "Uploading..." : "Upload Post"}
                   </button>
+ 
                 </div>
               </div>
             </div>

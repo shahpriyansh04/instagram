@@ -6,6 +6,7 @@ import { CameraIcon } from "@heroicons/react/outline";
 import { db, storage } from "../firebase";
 import {
   addDoc,
+  arrayRemove,
   collection,
   deleteDoc,
   doc,
@@ -30,9 +31,12 @@ function AlertDialog() {
 
   const deletePost = async () => {
     setLoading(true);
-    const deleteRef = ref(storage, `posts/${data.postId}/image`);
+    const deleteRef = ref(storage, `posts/${user.id}/${data.postId}/image`);
     await deleteObject(deleteRef).then(async () => {
-      await deleteDoc(doc(db, "posts", data.postId)).then(() => {
+      await deleteDoc(doc(db, "posts", data.postId)).then(async () => {
+        await updateDoc(doc(db, "users", user.id), {
+          posts: arrayRemove(data.postId), 
+        })
         setOpen(false);
         setLoading(false);
         setData({ postId: null, title: "", description: "", type: "" });
@@ -51,7 +55,9 @@ function AlertDialog() {
       <Dialog
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
-        onClose={() => cancelDeletePost()}
+        onClose={() => {}
+          //cancelDeletePost()
+        }
       >
         <div className="flex items-end justify-center min-h-[600px] sm:min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
