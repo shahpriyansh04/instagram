@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { modalState } from "../atoms/modalAtom";
 import { useRecoilState } from "recoil";
 import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 function Header() {
   const router = useRouter();
   const user = useUser();
@@ -33,18 +34,15 @@ function Header() {
             objectFit="contain"
           />
         </div>
-        <div
-          className=" lg:hidden relative  w-10 flex-shrink-0 cursor-pointer"
-          onClick={() => {
-            router.push("/");
-          }}
-        >
-          <Image
-            src="https://links.papareact.com/jjm"
-            layout="fill"
-            objectFit="contain"
-          />
-        </div>
+        <Link href="/">
+          <div className=" lg:hidden relative  w-10 flex-shrink-0 cursor-pointer ">
+            <Image
+              src="https://links.papareact.com/jjm"
+              layout="fill"
+              objectFit="contain"
+            />
+          </div>
+        </Link>
 
         <div className="max-w-xs">
           <div className="mt-1 p-3  rounded-md relative ">
@@ -61,12 +59,9 @@ function Header() {
         </div>
 
         <div className="flex items-center justify-end space-x-4">
-          <HomeIcon
-            className="navBtn"
-            onClick={() => {
-              router.push("/");
-            }}
-          />
+          <Link href="/">
+            <HomeIcon className="navBtn" />
+          </Link>
           {/* <MenuIcon className="h-6 md:hidden cursor-pointer mt-1" /> */}
           <>
             <div className="relative navBtn">

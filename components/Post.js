@@ -26,6 +26,7 @@ import {
 import { db } from "../firebase";
 import Moment from "react-moment";
 import Dropdown from "./Dropdown";
+import Link from "next/link";
 function Post({ id, username, caption, userImg, img, uid }) {
   const user = useUser();
   const [comment, setComment] = useState("");
@@ -101,7 +102,9 @@ function Post({ id, username, caption, userImg, img, uid }) {
           className="rounded-full h-12 w-12 object-contain border p-1 mr-3"
           alt=""
         />
-        <p className="flex-1 font-bold">{username}</p>
+        <Link href={`/u/${user.id.substr(5)}`}>
+          <p className="flex-1 font-bold cursor-pointer">{username}</p>
+        </Link>
         {user.id === uid && <Dropdown id={id}></Dropdown>}
       </div>
       <img src={img} className="w-full object-cover" />
