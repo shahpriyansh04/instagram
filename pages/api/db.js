@@ -6,6 +6,7 @@ export default async function handler(req, res) {
       .collection("usernames")
       .doc(req.body.data.username)
       .set({ id: req.body.data.id });
+    await db.collection("users").doc(req.body.data.id).set(req.body.data);
   }
 
   if (req.body.type === "user.updated") {

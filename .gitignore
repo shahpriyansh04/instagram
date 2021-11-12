@@ -33,3 +33,4 @@ yarn-error.log*
 # vercel
 .vercel
 .instagram-8ee54-firebase-adminsdk-oe5j1-60b32723a8.json
+.idea
